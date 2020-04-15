@@ -21,7 +21,7 @@ class App extends Component {
   }
 
   dealDeck(array, numOfPlayers) {
-    console.log('numOfPlayers IN DEAL DECK', numOfPlayers)
+    // console.log('numOfPlayers IN DEAL DECK', numOfPlayers)
     const deck1 = [];
     const deck2 = [];
     const deck3 = [];
@@ -39,10 +39,10 @@ class App extends Component {
       if (array.length === 0) break;
     }
 
-    console.log('deck1 END OF DEALDECK', deck1)
-    console.log('deck2 END OF DEALDECK', deck2)
-    console.log('deck3 END OF DEALDECK', deck3)
-    console.log('deck4 END OF DEALDECK', deck4)
+    // console.log('deck1 END OF DEALDECK', deck1)
+    // console.log('deck2 END OF DEALDECK', deck2)
+    // console.log('deck3 END OF DEALDECK', deck3)
+    // console.log('deck4 END OF DEALDECK', deck4)
     this.setState(
       {
         decks: [deck1, deck2, deck3, deck4]
@@ -81,69 +81,137 @@ class App extends Component {
   }
 
   battle(array) {
-    console.log('decks array in battle', array)
+    // console.log('decks array in battle', array)
     const cards = [];
     array.forEach(deck => {
-      console.log('deck in forEach loop', deck)
-      if (deck.length > 0) {
+      // console.log('deck in forEach loop', deck)
+      if (deck.length === 0) deck[0] = 0;
+      // if (deck.length > 0) {
         let card = deck.pop();
         cards.push(card);
-      }
+      // }
     })
     this.setState(
       {
         currCards: cards
       }
     )
-    this.checkForDuplicate(this.state.currCards)
+    console.log('IN BATTLE BEFORE CHECKS')
+    const duplicateCount = this.checkForDuplicate(cards);
+    console.log('DUPLICATE COUNT', duplicateCount)
+
+    const playerWithHighestCard = this.findWinner(cards);
+    console.log('PLAYER WITH HIGHEST CARD', playerWithHighestCard);
+
+    this.compareWinnerAndDuplicates(playerWithHighestCard, duplicateCount, cards)
+    console.log('IN BATTLE AFTER CHECKS')
   }
 
+  // checks if same card is played returns 0 or number greater than 1
   checkForDuplicate(array) {
     console.log('input array of checkForDups', array)
-    let duplicate = false;
-    const checkDups = {};
+    const cardCount = {};
     const checkCurrCards = [...array];
     console.log('checkCurrCards array', checkCurrCards)
     checkCurrCards.forEach(card => {
       console.log('card in forEach loop', card)
-      if (!(card in checkDups)) checkDups[card] = true;
-      else duplicate = true
-      console.log('checkDups 1', checkDups)
+      cardCount[card] = (cardCount[card] || 0) + 1;
+      // if (!(card in cardCount)) cardCount[card] = true;
+      // else duplicate = true
+      console.log('cardCount 1', cardCount)
     })
 
-    if (duplicate) {
+    let isSameValue = false;
+    let dupCardValue;
+    Object.entries(cardCount).forEach(pair => {
+      if (pair[1] > 1) {
+        isSameValue = true;
+        dupCardValue = Number(pair[0]);
+      }
+    })
+    console.log('cardCount 2', cardCount)
+    return isSameValue ? dupCardValue : 0
+  }
+
+  // compares duplicate value to highest value and gives winner cards or if there is a duplicate update cards to be won
+  compareWinnerAndDuplicates(array, cardValue, currCards) {
+    console.log('ARRAY IN WINNER DUP CHECK', array)
+    console.log('cardValue IN WINNER DUP CHECK', cardValue)
+    console.log('currCards IN WINNER DUP CHECK', currCards)
+    if (cardValue === 0) {
+      console.log('IN FIRST IF STATEMENT')
+      currCards.forEach(card => {
+        if (card !== 0) this.state.decks[array[0]].unshift(card);
+      })
+      this.state.cardsToBeWon.forEach(card => {
+        if (card !== 0) this.state.decks[array[0]].unshift(card);
+      })
+      // this.state.decks[array[0]].unshift(...this.state.cardsToBeWon);
+      console.log('END OF FIRST IF STATEMENT')
       this.setState({
-        cardsToBeWon: checkCurrCards
+        cardsToBeWon: []
+      })
+    } else if (array[1] > cardValue) {
+      // this.state.decks[array[0]].unshift(...currCards, ...this.state.cardsToBeWon);
+      currCards.forEach(card => {
+        if (card !== 0) this.state.decks[array[0]].unshift(card);
+      })
+      this.state.cardsToBeWon.forEach(card => {
+        if (card !== 0) this.state.decks[array[0]].unshift(card);
+      })
+      this.setState({
+        cardsToBeWon: []
+      })
+    } else if (this.state.cardsToBeWon.length > 0) {
+      // let totalToWin = [...this.state.cardsToBeWon];
+      totalToWin.push(...currCards);
+      const totalWin = [];
+      this.state.cardsToBeWon.forEach(card => {
+        if (card !== 0) totalWin.unshift(card);
+      })
+      currCards.forEach(card => {
+        if (card !== 0) totalWin.unshift(card);
+      })
+      this.setState({
+        cardsToBeWon: totalToWin
+      });
+    } else {
+      this.setState({
+        cardsToBeWon: currCards
       })
     }
-    console.log('duplicate', duplicate)
-    console.log('checkDups 2', checkDups)
-    // duplicate = false;
   }
 
-  // findHighestCard(array) {
-  //   const currCards = [...array];
-  //   let leftIdx = 0;
-  //   let rightIdx = currCards.length - 1;
-  //   let highestCard = -Infinity
 
-  // }
+// find highest card and which player it belongs to
+findWinner(array) {
+  let highestValue = 0;
+  let playerIdx;
+  for (let i = 0; i < array.length; i += 1) {
+    if (array[i] > highestValue) {
+      highestValue = array[i];
+      playerIdx = i;
+    }
+  }
+  return [playerIdx, highestValue]
+}
 
-  render() {
-    return (
+
+render() {
+  return (
+    <div>
+      <h1>War A Card Game</h1>
       <div>
-        <h1>War A Card Game</h1>
-        <div>
-          <p>Enter the number of players</p>
-          <label htmlFor="players">Number of Players (2-4): </label>
-          <input type="number" id="players" name="players" min="2" max="4" placeholder="2" value={this.state.numOfPplayers} onChange={e => this.handleChange(e)}></input>
-          <button onClick={() => this.createGame()}>New Game</button>
-          <button onClick={() => this.battle(this.state.decks)}>Battle</button>
-          <Players numOfPlayers={this.state.numOfPlayers} decks={this.state.decks} currCards={this.state.currCards}/>
-        </div>
+        <p>Enter the number of players</p>
+        <label htmlFor="players">Number of Players (2-4): </label>
+        <input type="number" id="players" name="players" min="2" max="4" placeholder="2" value={this.state.numOfPplayers} onChange={e => this.handleChange(e)}></input>
+        <button onClick={() => this.createGame()}>New Game</button>
+        <button onClick={() => this.battle(this.state.decks)}>Battle</button>
+        <Players numOfPlayers={this.state.numOfPlayers} decks={this.state.decks} currCards={this.state.currCards} />
       </div>
-    )
-  }
+    </div>
+  )
+}
 }
 
 ReactDOM.render(<App />, document.getElementById('app'))
