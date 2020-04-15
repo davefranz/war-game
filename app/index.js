@@ -8,14 +8,9 @@ class App extends Component {
     super(props);
     this.state = {
       numOfPlayers: 2,
-      p1Deck: [],
-      p2Deck: [],
-      p3Deck: [],
-      p4Deck: [],
-      p1Card: 5,
-      p2Card: 10,
-      p3Card: 'Q',
-      p4Card: 'A',
+      decks: [[], [], [], []],
+      currCards: [],
+      cardsToBeWon: [],
     }
   }
 
@@ -31,6 +26,7 @@ class App extends Component {
     const deck2 = [];
     const deck3 = [];
     const deck4 = [];
+    const output = [];
     let i = 1;
     while (array.length > 0) {
       const card = array.pop();
@@ -42,16 +38,14 @@ class App extends Component {
       if (i > numOfPlayers) i = 1;
       if (array.length === 0) break;
     }
+
     console.log('deck1 END OF DEALDECK', deck1)
     console.log('deck2 END OF DEALDECK', deck2)
     console.log('deck3 END OF DEALDECK', deck3)
     console.log('deck4 END OF DEALDECK', deck4)
     this.setState(
       {
-        p1Deck: deck1,
-        p2Deck: deck2,
-        p3Deck: deck3,
-        p4Deck: deck4,
+        decks: [deck1, deck2, deck3, deck4]
       }
     )
   }
@@ -86,6 +80,55 @@ class App extends Component {
     return array;
   }
 
+  battle(array) {
+    console.log('decks array in battle', array)
+    const cards = [];
+    array.forEach(deck => {
+      console.log('deck in forEach loop', deck)
+      if (deck.length > 0) {
+        let card = deck.pop();
+        cards.push(card);
+      }
+    })
+    this.setState(
+      {
+        currCards: cards
+      }
+    )
+    this.checkForDuplicate(this.state.currCards)
+  }
+
+  checkForDuplicate(array) {
+    console.log('input array of checkForDups', array)
+    let duplicate = false;
+    const checkDups = {};
+    const checkCurrCards = [...array];
+    console.log('checkCurrCards array', checkCurrCards)
+    checkCurrCards.forEach(card => {
+      console.log('card in forEach loop', card)
+      if (!(card in checkDups)) checkDups[card] = true;
+      else duplicate = true
+      console.log('checkDups 1', checkDups)
+    })
+
+    if (duplicate) {
+      this.setState({
+        cardsToBeWon: checkCurrCards
+      })
+    }
+    console.log('duplicate', duplicate)
+    console.log('checkDups 2', checkDups)
+    // duplicate = false;
+  }
+
+  // findHighestCard(array) {
+  //   const currCards = [...array];
+  //   let leftIdx = 0;
+  //   let rightIdx = currCards.length - 1;
+  //   let highestCard = -Infinity
+
+  // }
+
   render() {
     return (
       <div>
@@ -95,7 +138,8 @@ class App extends Component {
           <label htmlFor="players">Number of Players (2-4): </label>
           <input type="number" id="players" name="players" min="2" max="4" placeholder="2" value={this.state.numOfPplayers} onChange={e => this.handleChange(e)}></input>
           <button onClick={() => this.createGame()}>New Game</button>
-          <Players numOfPlayers={this.state.numOfPlayers} p1Card={this.state.p1Card}/>
+          <button onClick={() => this.battle(this.state.decks)}>Battle</button>
+          <Players numOfPlayers={this.state.numOfPlayers} decks={this.state.decks} currCards={this.state.currCards}/>
         </div>
       </div>
     )
