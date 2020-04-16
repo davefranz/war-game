@@ -1,0 +1,77 @@
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Oswald';
+  background-image: url("../public/background.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  color: whitesmoke;
+}
+
+#gamePlay {
+    /* width: 100vw;
+    height: 75vw; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+input {
+  border-radius: 5px;
+  border: 0;
+}
+
+#btns {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 0.5em;
+}
+
+button {
+   width: 7em;
+    height: 2em;
+    font-size: 10pt;
+    border-radius: 5px;
+    background-color: #f5f5f500;
+    color: whitesmoke;
+}
+
+button:hover {
+    color: #245f29;
+    background-color: whitesmoke;
+}
+#decks {
+    width: 100%;
+    /* background-color: rgb(152, 152, 152); */
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 30px;
+}
+
+#player {
+  margin: 0.75em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 150px;
+}
+
+.currentCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  /* background-color: gray; */
+  height: 200px;
+  font-size: 50pt;
+  border: solid whitesmoke 2px;
+}
