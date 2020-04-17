@@ -1,15 +1,15 @@
 import React from 'react';
 
-function Players(props) {
+function Players({ numOfPlayers, currCards, decks}) {
   let counter = 1;
   let players = [];
-  while (counter < props.numOfPlayers + 1){
+  while (counter < numOfPlayers + 1){
     // if (counter === 1) {
       players.push(
         <div id="player" key={counter}>
-          <div className="currentCard">{props.currCards[counter - 1]}</div>
+          <div className="currentCard">{currCards[counter - 1]}</div>
           <div>Player {counter}</div> 
-          <div>Number of Cards: {props.decks[counter - 1].length}</div>
+          <div>Number of Cards: {decks[counter - 1].length}</div>
         </div>
       );
     counter += 1;
