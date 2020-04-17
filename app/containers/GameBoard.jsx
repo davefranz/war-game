@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom';
 import Players from '../components/Players.jsx';
 
 class GameBoard extends Component {
@@ -11,6 +10,9 @@ class GameBoard extends Component {
       currCards: [],
       cardsToBeWon: [],
     }
+   
+    // Do all functions need to be bound?
+    this.createGame = this.createGame.bind(this);
   }
 
   handleChange(e) {
@@ -19,12 +21,17 @@ class GameBoard extends Component {
     })
   }
 
+  createGame() {
+    const deck = this.createDeck();
+    const shuffled = this.shuffleDeck(deck);
+    this.dealDeck(shuffled, this.state.numOfPlayers)
+  }
+
   dealDeck(array, numOfPlayers) {
     const deck1 = [];
     const deck2 = [];
     const deck3 = [];
     const deck4 = [];
-    const output = [];
     let i = 1;
     while (array.length > 0) {
       const card = array.pop();
@@ -43,12 +50,7 @@ class GameBoard extends Component {
     )
   }
 
-  createGame() {
-    const deck = this.createDeck();
-    const shuffled = this.shuffleDeck(deck);
-    this.dealDeck(shuffled, this.state.numOfPlayers)
-  }
-
+  // Used numbers to represent face cards (ex. 11 = 'Jack')
   createDeck() {
     const deck = [];
     const elems = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
@@ -70,6 +72,7 @@ class GameBoard extends Component {
     return array;
   }
 
+  // Pops a card from each deck to be played and determines winner
   battle(array) {
     const cards = [];
     array.forEach(deck => {
@@ -87,6 +90,7 @@ class GameBoard extends Component {
     this.compareWinnerAndDuplicates(playerWithHighestCard, duplicateCount, cards);
   }
 
+  // Checks if the same card is played
   checkForDuplicate(array) {
     const cardCount = {};
     const checkCurrCards = [...array];
@@ -109,21 +113,10 @@ class GameBoard extends Component {
 
   // checks if more than one player has the highest card
   compareWinnerAndDuplicates(array, numOfDups, currCards) {
-    // when there is one high card winner
-    // MIGHT NOT NEED THIS FIRST IF STATEMENT
-    // if (numOfDups === 0) {
-    //   currCards.forEach(card => {
-    //     if (card !== 0) this.state.decks[array[0]].unshift(card);
-    //   })
-    //   this.state.cardsToBeWon.forEach(card => {
-    //     if (card !== 0) this.state.decks[array[0]].unshift(card);
-    //   })
-    //   this.setState({
-    //     cardsToBeWon: []
-    //   })
-    // // the high card still wins when there are duplicates
-    // } else 
+    const totalWin = [];
     
+    // checks if highest card is played by multiple players
+    // if single winner cards are given to the winner
     if (array[1] > numOfDups) {
       currCards.forEach(card => {
         if (card !== 0) this.state.decks[array[0]].unshift(card);
@@ -135,18 +128,20 @@ class GameBoard extends Component {
         cardsToBeWon: []
       })
 
+    // if there is a tie and there were duplicates in the previous round
     } else if (this.state.cardsToBeWon.length > 0) {
-      totalToWin.push(...currCards);
-      const totalWin = [];
+      // totalWin.push(...currCards);
       this.state.cardsToBeWon.forEach(card => {
-        if (card !== 0) totalWin.unshift(card);
+        if (card !== 0) totalWin.push(card);
       })
       currCards.forEach(card => {
-        if (card !== 0) totalWin.unshift(card);
+        if (card !== 0) totalWin.push(card);
       })
       this.setState({
-        cardsToBeWon: totalToWin
+        cardsToBeWon: totalWin
       });
+
+    // if there is a tie cards are saved to be won in the next round
     } else {
       this.setState({
         cardsToBeWon: currCards
@@ -154,8 +149,7 @@ class GameBoard extends Component {
     }
   }
 
-
-  // find highest card and which player it belongs to
+  // finds highest card and which player it belongs to
   findWinner(array) {
     let highestValue = 0;
     let playerIdx;
@@ -183,11 +177,12 @@ class GameBoard extends Component {
             </select>
           </div>
           <div id="btns">
-            <button onClick={() => this.createGame()}>New Game</button>
-            <button onClick={() => this.battle(this.state.decks)}>Battle</button>
+            <button data-testid="new-game" onClick={this.createGame}>New Game</button>
+            {/* <button onClick={() => this.createGame()}>New Game</button> */}
+            <button data-testid="battle" onClick={() => this.battle(this.state.decks)}>Battle</button>
           </div>
         </div>
-        <Players numOfPlayers={this.state.numOfPlayers} decks={this.state.decks} currCards={this.state.currCards} />
+        <Players data-testid="player" numOfPlayers={this.state.numOfPlayers} decks={this.state.decks} currCards={this.state.currCards} />
         {/* <button onClick={() => this.createGame()}>Auto Complete Game</button> */}
       </div>
     )
