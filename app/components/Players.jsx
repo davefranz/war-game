@@ -5,7 +5,7 @@ const Players = ({ numOfPlayers, currCards, decks }) => {
   let players = [];
   while (counter < numOfPlayers + 1) {
     players.push(
-      <div id="player" key={counter}>
+      <div data-testid="player" id="player" key={counter}>
         <div className="currentCard">{currCards[counter - 1]}</div>
         <div>Player {counter}</div>
         <div>Number of Cards: {decks[counter - 1].length}</div>
