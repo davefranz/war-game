@@ -15,10 +15,6 @@ class GameBoard extends Component {
     // Do all functions need to be bound?
     this.createGame = this.createGame.bind(this);
   }
-
-  sayHi() {
-    return 'hi'
-  }
   
   handleChange(e) {
     this.setState({
