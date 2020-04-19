@@ -16,6 +16,10 @@ class GameBoard extends Component {
     this.createGame = this.createGame.bind(this);
   }
 
+  sayHi() {
+    return 'hi'
+  }
+  
   handleChange(e) {
     this.setState({
       numOfPlayers: Number(e.target.value)

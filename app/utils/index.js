@@ -1,6 +1,4 @@
-export const add = (a, b) => a + b;
 
-export const sayName = (name) => `Hello ${name}!!!`
 
 export const createDeck = () => {
   const deck = [];
