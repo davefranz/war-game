@@ -10,7 +10,7 @@
     ]
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "start": "webpack-dev-server --open",
     "create": "webpack"
   },
