@@ -21,6 +21,14 @@ body {
   justify-content: center;
 }
 
+#players {
+  background-color: #f5f5f500;
+  color: whitesmoke;
+  margin-left: 0.5em;
+  width: 3em;
+  height: 2em;
+}
+
 #btns {
   display: flex;
   justify-content: space-evenly;
@@ -36,7 +44,9 @@ button {
   color: whitesmoke;
 }
 
-button:hover {
+button:hover,
+#players:hover,
+#players:active {
   color: #245f29;
   background-color: whitesmoke;
 }
