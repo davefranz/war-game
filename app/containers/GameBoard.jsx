@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Players from '../components/Players.jsx';
+import DisplayWinner from '../components/DisplayWinner.jsx';
 import { createDeck, shuffleDeck, findWinner, checkForDuplicate } from '../utils';
 
 class GameBoard extends Component {
@@ -10,16 +11,31 @@ class GameBoard extends Component {
       decks: [[], [], [], []],
       currCards: [],
       cardsToBeWon: [],
+      winner: '',
     }
 
-    // Do all functions need to be bound?
+
     this.createGame = this.createGame.bind(this);
+    this.newGame = this.newGame.bind(this);
   }
   
   handleChange(e) {
     this.setState({
-      numOfPlayers: Number(e.target.value)
-    })
+      numOfPlayers: Number(e.target.value),
+      decks: [[], [], [], []],
+      currCards: [],
+      cardsToBeWon: [],
+      winner: ''
+    }, () => this.createGame());
+  }
+
+  newGame() {
+    this.setState({
+      decks: [[], [], [], []],
+      currCards: [],
+      cardsToBeWon: [],
+      winner: ''
+    }, () => this.createGame())
   }
 
   createGame() {
@@ -64,19 +80,17 @@ class GameBoard extends Component {
         currCards: cards
       }
     )
-    const duplicateCount = checkForDuplicate(cards);
+    const duplicateValue = checkForDuplicate(cards);
     const playerWithHighestCard = findWinner(cards);
-    this.compareWinnerAndDuplicates(playerWithHighestCard, duplicateCount, cards);
+    this.compareWinnerAndDuplicates(playerWithHighestCard, duplicateValue, cards);
   }
 
   // checks if more than one player has the highest card
-  compareWinnerAndDuplicates(array, numOfDups, currCards) {
+  compareWinnerAndDuplicates(array, valueOfDuplicates, currCards) {
     const { decks, cardsToBeWon } = this.state;
     const totalWin = [];
-    // checks if highest card is played by multiple players
-    // if single winner cards are given to the winner
-    // [2, 4, 6, 0][[1, 5], [3, 4], [1, 3], [0]]
-    if (array[1] > numOfDups) {
+
+    if (array[1] > valueOfDuplicates) {
       currCards.forEach(card => {
         if (card) decks[array[0]].unshift(card);
       })
@@ -84,12 +98,12 @@ class GameBoard extends Component {
         if (card) decks[array[0]].unshift(card);
       })
       this.setState({
-        cardsToBeWon: []
+        cardsToBeWon: [],
+        winner: `${array[0] + 1}`
       })
 
       // if there is a tie and there were duplicates in the previous round
     } else if (cardsToBeWon.length > 0) {
-      // totalWin.push(...currCards);
       cardsToBeWon.forEach(card => {
         if (card) totalWin.push(card);
       })
@@ -97,15 +111,21 @@ class GameBoard extends Component {
         if (card) totalWin.push(card);
       })
       this.setState({
-        cardsToBeWon: totalWin
+        cardsToBeWon: totalWin,
+        winner: 'Tie'
       });
 
-      // if there is a tie cards are saved to be won in the next round
+      // if there is a tie - cards are saved to be won in the next round
     } else {
       this.setState({
-        cardsToBeWon: currCards
+        cardsToBeWon: currCards,
+        winner: 'Tie'
       })
     }
+  }
+
+  componentDidMount() {
+    this.createGame();
   }
 
   render() {
@@ -122,13 +142,12 @@ class GameBoard extends Component {
             </select>
           </div>
           <div id="btns">
-            <button data-testid="new-game" onClick={this.createGame}>New Game</button>
-            {/* <button onClick={() => this.createGame()}>New Game</button> */}
+            <button data-testid="new-game" onClick={this.newGame}>New Game</button>
             <button data-testid="battle" onClick={() => this.battle(this.state.decks)}>Battle</button>
           </div>
         </div>
+        <DisplayWinner winner={this.state.winner}/>
         <Players numOfPlayers={this.state.numOfPlayers} decks={this.state.decks} currCards={this.state.currCards} />
-        {/* <button onClick={() => this.createGame()}>Auto Complete Game</button> */}
       </div>
     )
   }
