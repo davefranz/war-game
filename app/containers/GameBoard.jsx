@@ -16,7 +16,7 @@ class GameBoard extends Component {
     this.createGame = this.createGame.bind(this);
     this.newGame = this.newGame.bind(this);
   }
-  
+
   handleChange(e) {
     this.setState({
       numOfPlayers: Number(e.target.value),
@@ -110,14 +110,14 @@ class GameBoard extends Component {
       })
       this.setState({
         cardsToBeWon: totalWin,
-        winner: 'Tie'
+        winner: 'TIE'
       });
 
       // if there is a tie - cards are saved to be won in the next round
     } else {
       this.setState({
         cardsToBeWon: currCards,
-        winner: 'Tie'
+        winner: 'TIE'
       })
     }
   }
@@ -144,7 +144,7 @@ class GameBoard extends Component {
             <button data-testid="battle" onClick={() => this.battle(this.state.decks)}>Battle</button>
           </div>
         </div>
-        <DisplayWinner winner={this.state.winner}/>
+        <DisplayWinner winner={this.state.winner} />
         <Players numOfPlayers={this.state.numOfPlayers} decks={this.state.decks} currCards={this.state.currCards} />
       </div>
     )
