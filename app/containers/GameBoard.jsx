@@ -13,8 +13,6 @@ class GameBoard extends Component {
       cardsToBeWon: [],
       winner: '',
     }
-
-
     this.createGame = this.createGame.bind(this);
     this.newGame = this.newGame.bind(this);
   }
