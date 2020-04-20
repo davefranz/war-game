@@ -11,10 +11,14 @@ npm install
 ```
 npm start
 ```
+### Run Tests
+```
+npm test
+```
 
 ## How to play
  - Select the number of players from the drop down
- - Click "New Game" button
+ - Click "New Game" button to reshuffle the deck and start a new game
  - Click "Battle" button to show the next card
  - The game is complete when one player has all the cards
  - Note: Face cards are represented by numbers (ex. 11 = Jack)
