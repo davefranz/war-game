@@ -17,4 +17,4 @@ npm start
  - Click "New Game" button
  - Click "Battle" button to show the next card
  - The game is complete when one player has all the cards
- - Note: Face cards are represnted by numbers (ex. 11 = Jack)
+ - Note: Face cards are represented by numbers (ex. 11 = Jack)
