@@ -2,6 +2,8 @@
 
 export const createDeck = () => {
   const deck = [];
+  // rename to elements
+  // only long-lived variable names should be short
   const elems = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
   for (let i = 0; i < 4; i++) {
     deck.push(...elems);
@@ -37,13 +39,17 @@ export const checkForDuplicate = (array) => {
   const cardCount = {};
   const checkCurrCards = [...array];
   let isSameValue = false;
+  // you don't need isSameValue if you set dupCardValue to 0 in the first place
   let dupCardValue;
 
   checkCurrCards.forEach(card => {
     cardCount[card] = (cardCount[card] || 0) + 1;
   })
 
+  // prefer destructuring for pair
+  // Object.entries(cardCount).forEach(([card, count]) => 
   Object.entries(cardCount).forEach(pair => {
+    // if (count > 1)
     if (pair[1] > 1) {
       isSameValue = true;
       dupCardValue = Number(pair[0]);
