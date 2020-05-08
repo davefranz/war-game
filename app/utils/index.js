@@ -2,9 +2,9 @@
 
 export const createDeck = () => {
   const deck = [];
-  const elems = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+  const cardValues = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
   for (let i = 0; i < 4; i++) {
-    deck.push(...elems);
+    deck.push(...cardValues);
   }
   return deck;
 }
@@ -36,19 +36,15 @@ export const findWinner = (array) => {
 export const checkForDuplicate = (array) => {
   const cardCount = {};
   const checkCurrCards = [...array];
-  let isSameValue = false;
-  let dupCardValue;
+  let dupCardValue = 0;
 
   checkCurrCards.forEach(card => {
     cardCount[card] = (cardCount[card] || 0) + 1;
   })
 
-  Object.entries(cardCount).forEach(pair => {
-    if (pair[1] > 1) {
-      isSameValue = true;
-      dupCardValue = Number(pair[0]);
-    }
+  Object.entries(cardCount).forEach(([card, count]) => {
+    if (count > 1) dupCardValue = Number(card);
   })
 
-  return isSameValue ? dupCardValue : 0
+  return dupCardValue;
 }
