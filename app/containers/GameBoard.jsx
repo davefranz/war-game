@@ -43,7 +43,6 @@ class GameBoard extends Component {
   }
 
   dealDeck(shuffledDeck) {
-    console.log('shuffledDeck', shuffledDeck)
     const decks = {};
     let i = 1;
     while (shuffledDeck.length > 0) {
@@ -59,8 +58,6 @@ class GameBoard extends Component {
       if (decks[`deck${idx + 1}`]) return decks[`deck${idx + 1}`];
       else return [];
     });
-    console.log('decks object', decks);
-    console.log('playerDecks', playerDecks)
 
     this.setState({
         decks: playerDecks
