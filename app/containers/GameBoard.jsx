@@ -38,66 +38,90 @@ class GameBoard extends Component {
 
   createGame() {
     const deck = createDeck();
-    const shuffled = shuffleDeck(deck);
-    this.dealDeck(shuffled, this.state.numOfPlayers)
+    const shuffledDeck = shuffleDeck(deck);
+    this.dealDeck(shuffledDeck)
   }
 
-  dealDeck(array, numOfPlayers) {
-    const deck1 = [];
-    const deck2 = [];
-    const deck3 = [];
-    const deck4 = [];
+  dealDeck(shuffledDeck) {
+    console.log('shuffledDeck', shuffledDeck)
+    const decks = {};
     let i = 1;
-    while (array.length > 0) {
-      const card = array.pop();
-      if (i === 1) deck1.push(card);
-      else if (i === 2) deck2.push(card);
-      else if (i === 3) deck3.push(card);
-      else if (i === 4) deck4.push(card);
-      i += 1;
-      if (i > numOfPlayers) i = 1;
-      if (array.length === 0) break;
+    while (shuffledDeck.length > 0) {
+      const card = shuffledDeck.pop();
+      const currentDeck = decks[`deck${i}`];
+      if (!currentDeck) decks[`deck${i}`] = [card];
+      else currentDeck.push(card); 
+      i === this.state.numOfPlayers ? i = 1 : i += 1;
+      if (shuffledDeck.length === 0) break;
     }
-    this.setState(
-      {
-        decks: [deck1, deck2, deck3, deck4]
-      }
-    )
+    
+    const playerDecks = Array.from('x'.repeat(4)).map( (item, idx) => {
+      if (decks[`deck${idx + 1}`]) return decks[`deck${idx + 1}`];
+      else return [];
+    });
+    console.log('decks object', decks);
+    console.log('playerDecks', playerDecks)
+
+    this.setState({
+        decks: playerDecks
+      })
   }
+
+  // dealDeck(shuffledDeck) {
+  //   const deck1 = [];
+  //   const deck2 = [];
+  //   const deck3 = [];
+  //   const deck4 = [];
+  //   let i = 1;
+  //   while (shuffledDeck.length > 0) {
+  //     const card = shuffledDeck.pop();
+  //     if (i === 1) deck1.push(card);
+  //     else if (i === 2) deck2.push(card);
+  //     else if (i === 3) deck3.push(card);
+  //     else if (i === 4) deck4.push(card);
+  //     i += 1;
+  //     if (i > this.state.numOfPlayers) i = 1;
+  //     if (shuffledDeck.length === 0) break;
+  //   }
+  //   this.setState(
+  //     {
+  //       decks: [deck1, deck2, deck3, deck4]
+  //     }
+  //   )
+  // }
 
   // Pops a card from each deck to be played and determines winner
-  battle(array) {
-    const cards = [];
-    array.forEach(deck => {
+  battle(decks) {
+    const cardsPlayed = [];
+    decks.forEach(deck => {
       if (deck.length === 0) deck[0] = 0;
       let card = deck.pop();
-      cards.push(card);
+      cardsPlayed.push(card);
     })
-    this.setState(
-      {
-        currCards: cards
-      }
-    )
-    const duplicateValue = checkForDuplicate(cards);
-    const playerWithHighestCard = findWinner(cards);
-    this.compareWinnerAndDuplicates(playerWithHighestCard, duplicateValue, cards);
+    this.setState({
+        currCards: cardsPlayed
+      })
+    const duplicateValue = checkForDuplicate(cardsPlayed);
+    const playerWithHighestCard = findWinner(cardsPlayed);
+    this.compareWinnerAndDuplicates(playerWithHighestCard, duplicateValue, cardsPlayed);
   }
 
   // checks if more than one player has the highest card
-  compareWinnerAndDuplicates(array, valueOfDuplicates, currCards) {
-    const { decks, cardsToBeWon } = this.state;
+  compareWinnerAndDuplicates(winnerIdxAndCardValue, valueOfDuplicates, currCards) {
+    const { cardsToBeWon } = this.state;
+    const decks = [...this.state.decks];
     const totalWin = [];
 
-    if (array[1] > valueOfDuplicates) {
+    if (winnerIdxAndCardValue[1] > valueOfDuplicates) {
       currCards.forEach(card => {
-        if (card) decks[array[0]].unshift(card);
+        if (card) decks[winnerIdxAndCardValue[0]].unshift(card);
       })
       cardsToBeWon.forEach(card => {
-        if (card) decks[array[0]].unshift(card);
+        if (card) decks[winnerIdxAndCardValue[0]].unshift(card);
       })
       this.setState({
         cardsToBeWon: [],
-        winner: `${array[0] + 1}`
+        winner: `${winnerIdxAndCardValue[0] + 1}`
       })
 
       // if there is a tie and there were duplicates in the previous round
