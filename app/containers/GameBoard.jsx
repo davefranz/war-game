@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import Players from '../components/Players.jsx';
 import DisplayWinner from '../components/DisplayWinner.jsx';
 import { createDeck, shuffleDeck, findWinner, checkForDuplicate } from '../utils';
@@ -15,6 +15,7 @@ class GameBoard extends Component {
     }
     this.createGame = this.createGame.bind(this);
     this.newGame = this.newGame.bind(this);
+    this.battle = this.battle.bind(this);
   }
 
   handleChange(e) {
@@ -37,12 +38,7 @@ class GameBoard extends Component {
   }
 
   createGame() {
-    const deck = createDeck();
-    const shuffledDeck = shuffleDeck(deck);
-    this.dealDeck(shuffledDeck)
-  }
-
-  dealDeck(shuffledDeck) {
+    const shuffledDeck = shuffleDeck(createDeck());
     const decks = {};
     let i = 1;
     while (shuffledDeck.length > 0) {
@@ -53,15 +49,17 @@ class GameBoard extends Component {
       i === this.state.numOfPlayers ? i = 1 : i += 1;
       if (shuffledDeck.length === 0) break;
     }
-    
-    const playerDecks = Array.from('x'.repeat(4)).map( (item, idx) => {
+
+    // num players is now utilized everywhere instead of assuming 4 decks and having
+    // to work around that
+    const playerDecks = Array.from('x'.repeat(this.state.numOfPlayers)).map( (item, idx) => {
       if (decks[`deck${idx + 1}`]) return decks[`deck${idx + 1}`];
       else return [];
     });
 
     this.setState({
-        decks: playerDecks
-      })
+      decks: playerDecks
+    });
   }
 
   // dealDeck(shuffledDeck) {
@@ -87,38 +85,35 @@ class GameBoard extends Component {
   //   )
   // }
 
-  // Pops a card from each deck to be played and determines winner
-  battle(decks) {
-    const cardsPlayed = [];
-    decks.forEach(deck => {
-      if (deck.length === 0) deck[0] = 0;
-      let card = deck.pop();
-      cardsPlayed.push(card);
-    })
-    this.setState({
-        currCards: cardsPlayed
-      })
-    const duplicateValue = checkForDuplicate(cardsPlayed);
-    const playerWithHighestCard = findWinner(cardsPlayed);
-    this.compareWinnerAndDuplicates(playerWithHighestCard, duplicateValue, cardsPlayed);
+  // Pops a card from each deck to be played
+  battle() {
+    const currCards = this.state.decks.reduce(
+      (accumulator, deck) => accumulator.concat(deck.pop()),
+      []
+    );
+
+    // look up why the second arg of set state is important
+    this.setState({ currCards }, this.compareWinnerAndDuplicates);
   }
 
-  // checks if more than one player has the highest card
-  compareWinnerAndDuplicates(winnerIdxAndCardValue, valueOfDuplicates, currCards) {
-    const { cardsToBeWon } = this.state;
+  // determines winner
+  compareWinnerAndDuplicates() {
+    const { cardsToBeWon, currCards } = this.state;
     const decks = [...this.state.decks];
+    const [playerWithHighestCard, highestValue] = findWinner(currCards);
+    const duplicateValue = checkForDuplicate(currCards);
     const totalWin = [];
 
-    if (winnerIdxAndCardValue[1] > valueOfDuplicates) {
+    if (highestValue > duplicateValue) {
       currCards.forEach(card => {
-        if (card) decks[winnerIdxAndCardValue[0]].unshift(card);
+        if (card) decks[playerWithHighestCard].unshift(card);
       })
       cardsToBeWon.forEach(card => {
-        if (card) decks[winnerIdxAndCardValue[0]].unshift(card);
+        if (card) decks[playerWithHighestCard].unshift(card);
       })
       this.setState({
         cardsToBeWon: [],
-        winner: `${winnerIdxAndCardValue[0] + 1}`
+        winner: `${playerWithHighestCard + 1}`
       })
 
       // if there is a tie and there were duplicates in the previous round
@@ -162,7 +157,7 @@ class GameBoard extends Component {
           </div>
           <div id="btns">
             <button data-testid="new-game" onClick={this.newGame}>New Game</button>
-            <button data-testid="battle" onClick={() => this.battle(this.state.decks)}>Battle</button>
+            <button data-testid="battle" onClick={this.battle}>Battle</button>
           </div>
         </div>
         <DisplayWinner winner={this.state.winner} />
