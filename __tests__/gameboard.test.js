@@ -1,6 +1,6 @@
 import React from "react";
 import GameBoard from '../app/containers/GameBoard.jsx';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, cleanup, fireEvent, getNodeText } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 afterEach(cleanup);
@@ -31,4 +31,14 @@ describe('GameBoard method tests', () => {
     expect(select.value).toBe("4");
     expect(players).toHaveLength(4);
   });
+
 });
+
+describe('battle button', () => {
+  it('should display a card value within the range of 0-14', () => {
+    const { getByTestId } = render(<GameBoard />)
+    fireEvent.click(getByTestId('battle'));
+    const actualCard = getNodeText(getByTestId('curr-card-0'))
+    expect(actualCard > 0 && actualCard < 15).toBe(true)
+  })
+})

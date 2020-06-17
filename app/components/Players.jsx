@@ -26,7 +26,7 @@ const Players = ({ numOfPlayers, currCards, decks }) => {
   <div id="decks">
     {Array.from('x'.repeat(numOfPlayers)).map((item, idx) => (
       <div data-testid="player" id="player" key={idx + 1}>
-        <div data-testid="curr-card" className="currentCard">{currCards[idx]}</div>
+        <div data-testid={`curr-card-${idx}`} className="currentCard">{currCards[idx]}</div>
         <div>Player {idx + 1}</div>
         <div data-testid="num-of-cards">Number of Cards: {decks[idx].length}</div>
       </div>
