@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`display winner componen tests renders 1`] = `
+<DocumentFragment>
+  <p
+    id="winner"
+  >
+    Barbara!
+  </p>
+</DocumentFragment>
+`;
